@@ -58,10 +58,26 @@ export default function Home() {
           <div className="h-px w-16 bg-gradient-to-l from-transparent to-gold" />
         </div>
 
-        {/* Title */}
-        <h1 className="fade-in-up-delay-2 font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight" style={{ color: '#FAF7F2' }}>
-          MBTI로 만나는<br />
-          <span className="gold-shimmer">나의 클래식 음악</span>
+        {/* Title — 클릭 시 퀴즈 이동 */}
+        <h1
+          onClick={() => navigate('/quiz/1')}
+          className="fade-in-up-delay-2 font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight cursor-pointer group select-none"
+          style={{ color: '#FAF7F2' }}
+        >
+          <span className="inline-flex items-center gap-2 group-hover:opacity-80 transition-opacity duration-200">
+            🎼 MBTI로 만나는
+          </span>
+          <br />
+          <span
+            className="gold-shimmer underline-offset-4"
+            style={{
+              textDecoration: 'underline',
+              textDecorationColor: 'rgba(201,168,76,0.4)',
+              textDecorationThickness: '2px',
+            }}
+          >
+            나의 클래식 음악
+          </span>
         </h1>
 
         {/* Subtitle */}
