@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { shortsData } from '../data/shortsData'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -9,6 +10,9 @@ export default function Home() {
     const t = setTimeout(() => setLoaded(true), 100)
     return () => clearTimeout(t)
   }, [])
+
+  // 홈에서 미리보기로 보여줄 4개
+  const previewShorts = shortsData.slice(0, 4)
 
   return (
     <div className="min-h-screen bg-dark flex flex-col items-center justify-center relative overflow-hidden px-4">
@@ -22,22 +26,21 @@ export default function Home() {
           className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-5"
           style={{ background: 'radial-gradient(circle, #C9A84C 0%, transparent 70%)' }}
         />
-        {/* Music staff lines */}
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
             className="absolute w-full opacity-5"
-            style={{
-              height: '1px',
-              background: '#C9A84C',
-              top: `${20 + i * 6}%`,
-            }}
+            style={{ height: '1px', background: '#C9A84C', top: `${20 + i * 6}%` }}
           />
         ))}
       </div>
 
       {/* Content */}
-      <div className={`relative z-10 flex flex-col items-center text-center max-w-xl mx-auto transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      <div
+        className={`relative z-10 flex flex-col items-center text-center w-full max-w-xl mx-auto transition-all duration-1000 ${
+          loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+      >
         {/* Logo */}
         <div className="mb-8 fade-in-up">
           <img
@@ -62,7 +65,7 @@ export default function Home() {
         </h1>
 
         {/* Subtitle */}
-        <p className="fade-in-up-delay-3 text-cream/60 text-base md:text-lg mb-12 leading-relaxed font-serif-kr font-light">
+        <p className="fade-in-up-delay-3 text-cream/60 text-base md:text-lg mb-10 leading-relaxed font-serif-kr font-light">
           당신의 성격 유형에 맞는 클래식 음악을<br className="hidden md:block" />
           찾아드립니다
         </p>
@@ -83,10 +86,91 @@ export default function Home() {
           />
         </button>
 
-        {/* Subtitle under button */}
-        <p className="mt-6 text-cream/30 text-sm font-sans fade-in-up-delay-4">
+        <p className="mt-4 text-cream/30 text-sm font-sans fade-in-up-delay-4">
           4가지 질문으로 나의 클래식을 발견하세요
         </p>
+
+        {/* ─── Shorts 섹션 ─── */}
+        <div className="fade-in-up-delay-4 w-full mt-14">
+          {/* 섹션 헤더 */}
+          <div className="flex items-center justify-between mb-4 px-1">
+            <div className="flex items-center gap-2">
+              <div
+                className="px-2 py-0.5 rounded-full text-xs font-sans font-semibold"
+                style={{ background: 'rgba(255,0,0,0.15)', color: '#FF6B6B', border: '1px solid rgba(255,0,0,0.25)' }}
+              >
+                ▶ Shorts
+              </div>
+              <span className="text-cream/60 text-sm font-serif-kr">MBTI 클래식 미리듣기</span>
+            </div>
+            <button
+              onClick={() => navigate('/shorts')}
+              className="text-gold text-xs font-sans hover:underline transition-all"
+            >
+              전체 보기 →
+            </button>
+          </div>
+
+          {/* 썸네일 가로 스크롤 */}
+          <div className="grid grid-cols-4 gap-2.5">
+            {previewShorts.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => navigate('/shorts')}
+                className="relative overflow-hidden rounded-xl group"
+                style={{ aspectRatio: '9/16' }}
+              >
+                <img
+                  src={`https://img.youtube.com/vi/${item.videoId}/maxresdefault.jpg`}
+                  alt={item.type}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => {
+                    e.target.src = `https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`
+                  }}
+                />
+                {/* dark overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(to bottom, rgba(26,18,8,0.3) 0%, transparent 40%, rgba(26,18,8,0.75) 100%)' }}
+                />
+                {/* MBTI badge */}
+                <div className="absolute top-2 left-0 right-0 flex justify-center">
+                  <span
+                    className="text-xs font-serif font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: 'linear-gradient(135deg,#C9A84C,#E4C76B)', color: '#1A1208' }}
+                  >
+                    {item.type}
+                  </span>
+                </div>
+                {/* play icon */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(201,168,76,0.9)' }}
+                  >
+                    <svg className="w-3.5 h-3.5 ml-0.5" fill="#1A1208" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* 전체 보기 버튼 */}
+          <button
+            onClick={() => navigate('/shorts')}
+            className="w-full mt-3 py-3 rounded-xl text-sm font-sans font-medium transition-all duration-200 hover:opacity-80 flex items-center justify-center gap-2"
+            style={{
+              background: 'rgba(201,168,76,0.07)',
+              border: '1px solid rgba(201,168,76,0.18)',
+              color: 'rgba(201,168,76,0.8)',
+            }}
+          >
+            <span>전체 {shortsData.length}개 Shorts 보기</span>
+            <span>→</span>
+          </button>
+        </div>
       </div>
 
       {/* Bottom decoration */}
