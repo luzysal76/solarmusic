@@ -2,9 +2,14 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { mbtiResults } from '../data/mbtiData'
 
+// Shorts URL도 처리 (shorts/VIDEO_ID 형식)
 function getYouTubeId(url) {
-  const match = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  const match = url.match(/(?:v=|youtu\.be\/|shorts\/)([A-Za-z0-9_-]{11})/)
   return match ? match[1] : null
+}
+
+function isYouTubeShorts(url) {
+  return url.includes('/shorts/')
 }
 
 export default function Result() {
@@ -14,11 +19,13 @@ export default function Result() {
   const [showVideo, setShowVideo] = useState(false)
 
   const result = mbtiResults[type?.toUpperCase()]
+  const isShorts = result ? isYouTubeShorts(result.youtubeUrl) : false
 
   useEffect(() => {
+    setShowVideo(false)
     const t = setTimeout(() => setLoaded(true), 100)
     return () => clearTimeout(t)
-  }, [])
+  }, [type])
 
   if (!result) {
     return (
@@ -53,7 +60,8 @@ export default function Result() {
           className="text-gold/60 hover:text-gold transition-colors duration-200 flex items-center gap-2 text-sm font-sans"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
           처음으로
         </button>
@@ -91,67 +99,143 @@ export default function Result() {
             boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           }}
         >
-          {/* YouTube thumbnail / player */}
-          <div
-            className="relative w-full overflow-hidden cursor-pointer group"
-            style={{ aspectRatio: '16/9' }}
-            onClick={() => setShowVideo(true)}
-          >
-            {showVideo && videoId ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-                title={result.piece}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            ) : (
-              <>
-                {thumbnailUrl ? (
-                  <img
-                    src={thumbnailUrl}
-                    alt={result.piece}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      e.target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-                    }}
+          {/* Video / Thumbnail section */}
+          {isShorts ? (
+            /* ── Shorts: 세로 비율 (9:16), 가운데 배치 ── */
+            <div className="flex justify-center py-4 px-4"
+              style={{ background: 'rgba(0,0,0,0.3)' }}>
+              <div
+                className="relative overflow-hidden cursor-pointer group rounded-xl"
+                style={{ width: '100%', maxWidth: '280px', aspectRatio: '9/16' }}
+                onClick={() => setShowVideo(true)}
+              >
+                {showVideo && videoId ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                    title={result.piece}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
                   />
                 ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #2A1E0A, #1A1208)' }}
-                  >
-                    <div className="text-gold/30 text-6xl">♪</div>
-                  </div>
+                  <>
+                    {thumbnailUrl ? (
+                      <img
+                        src={thumbnailUrl}
+                        alt={result.piece}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, #2A1E0A, #1A1208)' }}
+                      >
+                        <div className="text-gold/30 text-6xl">♪</div>
+                      </div>
+                    )}
+                    {/* Overlay */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: 'linear-gradient(to top, rgba(26,18,8,0.7) 0%, transparent 50%)' }}
+                    />
+                    {/* Play button */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div
+                        className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                        style={{ background: 'rgba(201,168,76,0.9)', boxShadow: '0 0 30px rgba(201,168,76,0.5)' }}
+                      >
+                        <svg className="w-6 h-6 text-dark ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                    {/* Shorts badge */}
+                    <div className="absolute top-3 left-3">
+                      <div
+                        className="text-xs font-sans px-2 py-0.5 rounded-full font-semibold"
+                        style={{ background: 'rgba(255,0,0,0.85)', color: '#fff' }}
+                      >
+                        ▶ Shorts
+                      </div>
+                    </div>
+                    {/* Tap hint */}
+                    <div className="absolute bottom-3 right-3">
+                      <div
+                        className="text-xs font-sans px-2 py-1 rounded"
+                        style={{ background: 'rgba(0,0,0,0.7)', color: '#FAF7F2' }}
+                      >
+                        탭하여 재생
+                      </div>
+                    </div>
+                  </>
                 )}
-                {/* Dark overlay */}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to top, rgba(26,18,8,0.8) 0%, rgba(26,18,8,0.2) 60%, transparent 100%)' }}
+              </div>
+            </div>
+          ) : (
+            /* ── 일반 영상: 가로 비율 (16:9) ── */
+            <div
+              className="relative w-full overflow-hidden cursor-pointer group"
+              style={{ aspectRatio: '16/9' }}
+              onClick={() => setShowVideo(true)}
+            >
+              {showVideo && videoId ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                  title={result.piece}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                  style={{ border: 'none' }}
                 />
-                {/* Play button */}
-                <div className="absolute inset-0 flex items-center justify-center">
+              ) : (
+                <>
+                  {thumbnailUrl ? (
+                    <img
+                      src={thumbnailUrl}
+                      alt={result.piece}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.target.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+                      }}
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #2A1E0A, #1A1208)' }}
+                    >
+                      <div className="text-gold/30 text-6xl">♪</div>
+                    </div>
+                  )}
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                    style={{ background: 'rgba(201,168,76,0.9)', boxShadow: '0 0 30px rgba(201,168,76,0.5)' }}
-                  >
-                    <svg className="w-7 h-7 text-dark ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(to top, rgba(26,18,8,0.8) 0%, rgba(26,18,8,0.2) 60%, transparent 100%)' }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div
+                      className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                      style={{ background: 'rgba(201,168,76,0.9)', boxShadow: '0 0 30px rgba(201,168,76,0.5)' }}
+                    >
+                      <svg className="w-7 h-7 text-dark ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-                {/* YouTube label */}
-                <div className="absolute bottom-3 right-3">
-                  <div
-                    className="text-xs font-sans px-2 py-1 rounded"
-                    style={{ background: 'rgba(0,0,0,0.7)', color: '#FAF7F2' }}
-                  >
-                    YouTube에서 재생
+                  <div className="absolute bottom-3 right-3">
+                    <div
+                      className="text-xs font-sans px-2 py-1 rounded"
+                      style={{ background: 'rgba(0,0,0,0.7)', color: '#FAF7F2' }}
+                    >
+                      YouTube에서 재생
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
-          </div>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Music info */}
           <div className="p-6 md:p-8">
@@ -192,7 +276,9 @@ export default function Result() {
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
           </svg>
-          <span className="font-sans text-sm font-medium">YouTube에서 전체 감상하기</span>
+          <span className="font-sans text-sm font-medium">
+            {isShorts ? 'YouTube Shorts에서 감상하기' : 'YouTube에서 전체 감상하기'}
+          </span>
         </a>
 
         {/* Share & Retry buttons */}
