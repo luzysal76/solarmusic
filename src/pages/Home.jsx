@@ -51,39 +51,52 @@ export default function Home() {
           />
         </div>
 
-        {/* Decorative line */}
-        <div className="flex items-center gap-4 mb-6 fade-in-up-delay-1">
-          <div className="h-px w-16 bg-gradient-to-r from-transparent to-gold" />
-          <span className="text-gold text-xs tracking-[0.3em] uppercase font-sans">Classical Music</span>
-          <div className="h-px w-16 bg-gradient-to-l from-transparent to-gold" />
-        </div>
-
-        {/* Title — 클릭 시 퀴즈 이동 */}
-        <h1
+        {/* Main Title — 골드 대형, 클릭 시 퀴즈 이동 */}
+        <div
           onClick={() => navigate('/quiz/1')}
-          className="fade-in-up-delay-2 font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight cursor-pointer group select-none"
-          style={{ color: '#FAF7F2' }}
+          className="fade-in-up-delay-1 cursor-pointer group select-none mb-3 w-full"
         >
-          <span className="inline-flex items-center gap-2 group-hover:opacity-80 transition-opacity duration-200">
-            🎼 MBTI로 만나는
-          </span>
-          <br />
-          <span
-            className="gold-shimmer underline-offset-4"
+          {/* 이모지 + 작은 레이블 */}
+          <p className="text-cream/40 text-xs tracking-[0.35em] uppercase font-sans mb-3">
+            🎼 &nbsp; S o l L a &nbsp; M u s i c
+          </p>
+
+          {/* 메인 골드 타이틀 */}
+          <h1
+            className="font-serif font-bold leading-tight transition-all duration-300 group-hover:scale-[1.02]"
             style={{
-              textDecoration: 'underline',
-              textDecorationColor: 'rgba(201,168,76,0.4)',
-              textDecorationThickness: '2px',
+              fontSize: 'clamp(2rem, 8vw, 3.8rem)',
+              background: 'linear-gradient(135deg, #C9A84C 0%, #E4C76B 40%, #C9A84C 60%, #A07C2E 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              textShadow: 'none',
+              filter: 'drop-shadow(0 0 18px rgba(201,168,76,0.35))',
             }}
           >
-            나의 클래식 음악
-          </span>
-        </h1>
+            MBTI로 만나는<br />나의 클래식 음악
+          </h1>
+
+          {/* 언더라인 장식 */}
+          <div className="flex justify-center mt-3">
+            <div
+              className="h-0.5 rounded-full transition-all duration-500 group-hover:w-48"
+              style={{
+                width: '80px',
+                background: 'linear-gradient(90deg, transparent, #C9A84C, #E4C76B, #C9A84C, transparent)',
+              }}
+            />
+          </div>
+
+          {/* 클릭 유도 힌트 */}
+          <p className="text-gold/50 text-xs font-sans mt-2 tracking-widest group-hover:text-gold/80 transition-colors duration-200">
+            탭하여 시작하기 ↓
+          </p>
+        </div>
 
         {/* Subtitle */}
-        <p className="fade-in-up-delay-3 text-cream/60 text-base md:text-lg mb-10 leading-relaxed font-serif-kr font-light">
-          당신의 성격 유형에 맞는 클래식 음악을<br className="hidden md:block" />
-          찾아드립니다
+        <p className="fade-in-up-delay-2 text-cream/50 text-sm md:text-base mb-10 leading-relaxed font-serif-kr font-light">
+          당신의 성격 유형에 맞는 클래식 음악을 찾아드립니다
         </p>
 
         {/* CTA Button */}
