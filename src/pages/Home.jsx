@@ -66,15 +66,12 @@ export default function Home() {
             className="font-serif font-bold leading-tight transition-all duration-300 group-hover:scale-[1.02]"
             style={{
               fontSize: 'clamp(2rem, 8vw, 3.8rem)',
-              background: 'linear-gradient(135deg, #C9A84C 0%, #E4C76B 40%, #C9A84C 60%, #A07C2E 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              textShadow: 'none',
-              filter: 'drop-shadow(0 0 18px rgba(201,168,76,0.35))',
+              color: '#C9A84C',
+              textShadow: '0 0 40px rgba(201,168,76,0.5), 0 2px 8px rgba(0,0,0,0.8)',
             }}
           >
-            MBTI로 만나는<br />나의 클래식 음악
+            MBTI로 만나는<br />
+            <span style={{ color: '#E4C76B' }}>나의 클래식 음악</span>
           </h1>
 
           {/* 언더라인 장식 */}
